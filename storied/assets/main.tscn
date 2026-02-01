@@ -1,0 +1,163 @@
+[gd_scene format=3 uid="uid://s1t4klsokcig"]
+
+[ext_resource type="Script" uid="uid://dy3dd7et6jmh1" path="res://assets/main.gd" id="1_db5cl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_06ig3"]
+bg_color = Color(0, 0, 0, 1)
+
+[node name="Main" type="Node" unique_id=67756920]
+script = ExtResource("1_db5cl")
+
+[node name="Background" type="ColorRect" parent="." unique_id=2098787937]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.066021666, 0.07, 0.0483, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=890865465]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=2129273312]
+layout_mode = 2
+
+[node name="Output" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1524386439]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=772290331]
+layout_mode = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_right = 100
+
+[node name="OptionsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer" unique_id=677621008]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+alignment = 2
+
+[node name="Option1" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer/OptionsContainer" unique_id=2084226877]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Option 1"
+
+[node name="Option2" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer/OptionsContainer" unique_id=1231782218]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Option 2"
+
+[node name="Option3" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer/OptionsContainer" unique_id=34986063]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Option 3"
+
+[node name="Option4" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer/OptionsContainer" unique_id=769788646]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Option 4"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=332263917]
+layout_mode = 2
+size_flags_vertical = 8
+alignment = 2
+
+[node name="LoadButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=995332165]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Load Level"
+
+[node name="QuitButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=631661435]
+unique_name_in_owner = true
+layout_mode = 2
+text = "QUIT"
+
+[node name="FileDialog" type="PanelContainer" parent="." unique_id=888344582]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -227.0
+offset_top = -296.0
+offset_right = 227.0
+offset_bottom = 296.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_06ig3")
+
+[node name="MarginContainer" type="MarginContainer" parent="FileDialog" unique_id=1424012055]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FileDialog/MarginContainer" unique_id=1206564509]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="FileDialog/MarginContainer/VBoxContainer" unique_id=1799213233]
+layout_mode = 2
+
+[node name="Files" type="Label" parent="FileDialog/MarginContainer/VBoxContainer/Header" unique_id=1630180846]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "FILES"
+horizontal_alignment = 1
+
+[node name="CloseFilesButton" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/Header" unique_id=937882463]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "❌"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="FileDialog/MarginContainer/VBoxContainer" unique_id=1646303640]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FileDisplayVBox" type="VBoxContainer" parent="FileDialog/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1828305402]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="FileDialog/MarginContainer/VBoxContainer" unique_id=1087422228]
+layout_mode = 2
+alignment = 2
+
+[node name="RefreshButton" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1669721322]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "🔄️"
+
+[node name="OpenFolderButton" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2105738711]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Open Folder"

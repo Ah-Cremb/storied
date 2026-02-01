@@ -1,0 +1,64 @@
+Text adventures in Storied as organized like this:
+	
+Level
+|_ Rooms
+	|- ID [String_in_brackets]
+	|- Name (String)
+	|- Description (String)
+	|- Options (Array)
+		|_ Option (Dictionary[String, String])
+			|- Conditions
+			|- Text ("text":String)
+			|- Goto ("goto":String)
+			|_ Actions (Array)
+				|_ Action (Array)
+					|- Func (String)
+					|_ Args (String)
+
+Here's a template adventure:
+	
+[room_id] # ID used to jump with goto. First room in file is used as starting point.
+name="The Room" # Plaintext title displayed above description.
+desc="You're in a room. Do you want to go EAST or WEST?" # Description of 
+														 # surroundings and options.
+options=[ # List of options for the player.
+	{"text":"Go East","goto":"east_room"} # Button says "Go East", 
+										  # clicking it goes to room with id [east_room]
+	{"text":"Go West","goto":"west_room"}
+]
+
+
+[east_room]
+name="The End"
+desc="You win!"
+options=[
+	{"text":"Start Over","goto":"room_id"}
+	{"text":"Quit",actions:[["quit"]]} # Instead of going to another room,
+									   # this calls quit().
+]
+
+
+[west_room]
+name="West Room"
+desc="Look, a rock! Do you want it?"
+options=[
+	{"text":"Go East","goto":"room_id"},
+	{
+		"conditions":[
+			["less_than", "rock", 1] # Calls less_than(rock, 1) and returns true if
+									 # no rock in inventory.
+									 # All conditions must be met for option to show.
+		]
+		"text":"Take rock",
+		"actions":[
+			["add", "rock"], # Calls function add("rock") to add to inventory.
+		]
+	},
+	{
+		"conditions":[
+			["greater_than", "rock", 0]
+		]
+		"text":"Eat the rock",
+		"actions":[["quit"]]
+	}
+]

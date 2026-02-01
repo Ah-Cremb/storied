@@ -31,11 +31,21 @@ theme_override_constants/margin_bottom = 24
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=2129273312]
 layout_mode = 2
 
-[node name="Output" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1524386439]
+[node name="OutputName" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1284625625]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=851043757]
+layout_mode = 2
 size_flags_vertical = 3
+
+[node name="Output" type="Label" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=1524386439]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
 theme_override_font_sizes/font_size = 20
 vertical_alignment = 1
 
@@ -86,6 +96,7 @@ alignment = 2
 [node name="LoadButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=995332165]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "Load Level"
 
 [node name="QuitButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=631661435]
@@ -95,6 +106,7 @@ text = "QUIT"
 
 [node name="FileDialog" type="PanelContainer" parent="." unique_id=888344582]
 unique_name_in_owner = true
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -156,8 +168,80 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "🔄️"
 
+[node name="ViewDocs" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/HBoxContainer" unique_id=440024007]
+unique_name_in_owner = true
+layout_mode = 2
+text = "View Docs"
+
 [node name="OpenFolderButton" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2105738711]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Open Folder"
+
+[node name="DocsContainer" type="PanelContainer" parent="." unique_id=1933920554]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -227.0
+offset_top = -296.0
+offset_right = 227.0
+offset_bottom = 296.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_06ig3")
+
+[node name="MarginContainer" type="MarginContainer" parent="DocsContainer" unique_id=1625215292]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DocsContainer/MarginContainer" unique_id=1223356930]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="DocsContainer/MarginContainer/VBoxContainer" unique_id=233523811]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DocsContainer/MarginContainer/VBoxContainer/Header" unique_id=1313906577]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Documentation"
+horizontal_alignment = 1
+
+[node name="CloseDocs" type="Button" parent="DocsContainer/MarginContainer/VBoxContainer/Header" unique_id=1918274192]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "❌"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DocsContainer/MarginContainer/VBoxContainer" unique_id=514974067]
+visible = false
+layout_mode = 2
+alignment = 2
+
+[node name="RefreshButton" type="Button" parent="DocsContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1919018281]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "🔄️"
+
+[node name="ViewDocs" type="Button" parent="DocsContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2100387983]
+layout_mode = 2
+text = "View Docs"
+
+[node name="OpenFolderButton" type="Button" parent="DocsContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=149601538]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Open Folder"
+
+[node name="Docs" type="RichTextLabel" parent="DocsContainer/MarginContainer/VBoxContainer" unique_id=761663062]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3

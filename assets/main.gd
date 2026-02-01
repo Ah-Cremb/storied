@@ -1,18 +1,22 @@
-class_name Main extends Node
+extends Node
+
 var config_file : ConfigFile = ConfigFile.new()
 var start : Room
 
 const ISLE_OF_FLESH : String = "res://assets/levels/isle_of_flesh.cfg"
 const EMPTY_LEVEL : String = "res://assets/levels/empty.cfg"
-
+const DOCS : String = "res://assets/documentation.txt"
 
 const LEVEL_DIR : String = "user://levels/"
 const ASSET_DIR : String = "res://assets/levels/"
 const NL := "\n"
+const T := "\t"
+const LINE_WIDTH : int = 66 ## Characters per line in output.
 
 @onready var flags := Flags.new()
 @onready var inventory := Inventory.new()
 @onready var current_level := Level.new()
+@onready var output_name: Label = %OutputName
 @onready var output : Label = %Output
 @onready var quit_button: Button = %QuitButton
 @onready var options_container: VBoxContainer = %OptionsContainer
@@ -20,8 +24,12 @@ const NL := "\n"
 @onready var file_display_v_box: VBoxContainer = %FileDisplayVBox
 @onready var close_files_button: Button = %CloseFilesButton
 @onready var load_button: Button = %LoadButton
+@onready var view_docs: Button = %ViewDocs
 @onready var open_folder_button: Button = %OpenFolderButton
 @onready var refresh_button: Button = %RefreshButton
+@onready var docs: RichTextLabel = %Docs
+@onready var close_docs: Button = %CloseDocs
+@onready var docs_container: PanelContainer = %DocsContainer
 
 
 ###
@@ -105,7 +113,7 @@ class Room:
 	func _init(_name : String, _id : String, _desc : String, _options : Array[Option]) -> void:
 		name = _name
 		id = _id
-		desc = _desc
+		desc = set_desc_width(_desc)
 		options = _options
 		return
 	func _to_string() -> String:
@@ -115,6 +123,17 @@ class Room:
 		return s
 	func display() -> String:
 		return name + NL + desc
+	func set_desc_width(_desc : String) -> String:
+		var s = ""
+		var i : int = 0
+		for c in _desc:
+			if i >= LINE_WIDTH and c in " \t\n":
+				s += NL
+				i = 0
+			else: 
+				s += c
+				i += 1
+		return s
 
 class Option:
 	var text : String = ""
@@ -159,10 +178,13 @@ func _ready() -> void:
 	file_dialog.hide()
 	quit_button.pressed.connect(quit)
 	close_files_button.pressed.connect(file_dialog.hide)
+	close_docs.pressed.connect(docs_container.hide)
 	load_button.pressed.connect(_on_load_file_pressed)
 	open_folder_button.pressed.connect(OS.shell_show_in_file_manager.bind(ProjectSettings.globalize_path(LEVEL_DIR)))
 	refresh_button.pressed.connect(_on_load_file_pressed)
-	
+	add_docs()
+	view_docs.pressed.connect(docs_container.show)
+	docs.text = FileAccess.open(DOCS, FileAccess.READ).get_as_text()
 	#play_level(ISLE_OF_FLESH)
 	play_level(EMPTY_LEVEL)
 
@@ -173,7 +195,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func play_level(level : String):
 	print("Now loading " + level.get_file())
 	current_level = read_level(level)
-	print(current_level)
 	
 	if not current_level or current_level.is_empty():
 		output.text = "Select a level to begin."
@@ -234,7 +255,8 @@ func goto(room_id : String) -> void:
 	if not room: 
 		printerr("No room with id " + room_id + ".")
 		return
-	output.text = room.display()
+	output_name.text = room.name
+	output.text = room.desc
 	show_options(room.options)
 	return
 
@@ -249,7 +271,11 @@ func goto(room_id : String) -> void:
 	#increment(var_name, i)
 
 
-
+func add_docs():
+	#var file := FileAccess.open(DOCS, FileAccess.READ)
+	#var docs := file.get_as_text()
+	#file.close()
+	return
 
 func _on_load_file_pressed():
 	for child in file_display_v_box.get_children(): child.queue_free()

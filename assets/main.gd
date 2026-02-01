@@ -183,7 +183,7 @@ func _ready() -> void:
 	close_files_button.pressed.connect(file_dialog.hide)
 	close_docs.pressed.connect(docs_container.hide)
 	load_button.pressed.connect(_on_load_file_pressed)
-	open_folder_button.pressed.connect(OS.shell_show_in_file_manager.bind(ProjectSettings.globalize_path(LEVEL_DIR)))
+	open_folder_button.pressed.connect(show_level_dir)
 	refresh_button.pressed.connect(_on_load_file_pressed)
 	add_docs()
 	view_docs.pressed.connect(docs_container.show)
@@ -191,6 +191,8 @@ func _ready() -> void:
 	#play_level(ISLE_OF_FLESH)
 	play_level(EMPTY_LEVEL)
 
+func show_level_dir() -> void:
+	OS.shell_show_in_file_manager(ProjectSettings.globalize_path(LEVEL_DIR))
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("quit"): quit()
@@ -254,7 +256,7 @@ func check_condition(condition : Array) -> bool:
 	match num_args:
 		1: return flags.at(condition[0]) # Checks if a flag is t/f
 		2:
-			if condition[0] == "have":
+			if condition[0] in ["have", "has"]:
 				return compare(condition[1],">", 0)
 			elif typeof(condition[1]) == TYPE_BOOL: return flags.at(condition[0]) == condition[1]
 		3:

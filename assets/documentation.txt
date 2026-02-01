@@ -45,7 +45,7 @@ options=[
 	{"text":"Go East","goto":"room_id"},
 	{
 		"conditions":[
-			["less_than", "rock", 1] # Calls less_than(rock, 1) and returns true if
+			["rock", "=", 0] # Calls compare(args) and returns true if
 									 # no rock in inventory.
 									 # All conditions must be met for option to show.
 		]
@@ -56,7 +56,7 @@ options=[
 	},
 	{
 		"conditions":[
-			["greater_than", "rock", 0]
+			["have", "rock"]
 		]
 		"text":"Eat the rock",
 		"actions":[["quit"]]

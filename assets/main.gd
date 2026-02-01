@@ -45,6 +45,9 @@ class Flags:
 		return false
 	func found(flag : String) -> bool:
 		return flag in flag_dict.keys()
+	func at(flag : String) -> bool:
+		if not found(flag): return false
+		else: return flag_dict[flag]
 
 func set_true(flag : String) -> void:
 	flags.set_flag(flag, true)
@@ -71,7 +74,7 @@ class Inventory:
 		return item in inv_dict.keys()
 	func count(item : String) -> int:
 		if found(item): return inv_dict[item]
-		return 0
+		else: return 0
 	func _to_string() -> String:
 		var s := "INVENTORY:" + NL
 		for item : String in inv_dict:
@@ -139,10 +142,10 @@ class Option:
 	var text : String = ""
 	var actions : Array[Action]
 	var goes_to : String = ""
-	var conditions : Dictionary
+	var conditions : Array
 	func _init(_text : String, _goes_to : String, _actions, _conditions) -> void:
 		text = _text
-		goes_to = _goes_to
+		goes_to = _goes_to.to_lower()
 		set_actions(_actions)
 		conditions = _conditions
 		return
@@ -217,7 +220,7 @@ func read_level(level : String) -> Level:
 			var text = op.get("text", "Default Text")
 			var goes_to = op.get("goto", "")
 			var actions = op.get("actions", [])
-			var conditions = op.get("conditions", {})
+			var conditions = op.get("conditions", [])
 			var option := Option.new(text, goes_to, actions, conditions)
 			options.append(option)
 		var room := Room.new(room_name, room_id, room_desc, options)
@@ -232,17 +235,50 @@ func show_options(options : Array[Option]) -> void:
 		if i < options.size():
 			var option : Option = options[i]
 			button.text = option.text
+			
 			button.visible = true
-			if option.goes_to != "": button.pressed.connect(goto.bind(option.goes_to))
+			for condition in option.conditions:
+				if not check_condition(condition): button.visible = false
+			
 			for action : Action in option.actions:
 				if not has_method(action.callable): printerr("No method found: " + action.callable)
 				else:
 					button.pressed.connect(func(): callv(action.callable, action.args))
-					#button.pressed.connect(callv.bind(action.callable, action.args))
-					#print("Connecting " + action.callable + " " + str(action.args))
+			if option.goes_to != "": button.pressed.connect(goto.bind(option.goes_to))
 		else:
 			button.visible = false
 	return
+
+func check_condition(condition : Array) -> bool:
+	var num_args : int = condition.size()
+	match num_args:
+		1: return flags.at(condition[0]) # Checks if a flag is t/f
+		2:
+			if condition[0] == "have":
+				return compare(condition[1],">", 0)
+			elif typeof(condition[1]) == TYPE_BOOL: return flags.at(condition[0]) == condition[1]
+		3:
+			printerr("invalid condition: " + str(condition))
+			return false
+		4:
+			if condition[0] == "compare":
+				return compare.callv(condition.slice(1))
+			else: return false
+	return true
+
+func compare(item : String, operator : String = ">", num : int = 0) -> bool:
+	var count : int = inventory.count(item)
+	var result : bool = false
+	
+	match operator:
+		"<": result = (count < num)
+		">": result = (count > num)
+		"<=": result = (count <= num)
+		">=": result = (count >= num)
+		"=", "==": result = (count == num)
+		"!", "!=": result = (count != num)
+	print(item + operator + str(num) + ": " + str(result))
+	return result
 
 func reset_signal(s : Signal) -> void:
 	for connection in s.get_connections():

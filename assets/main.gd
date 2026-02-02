@@ -1,6 +1,6 @@
 extends Node
 
-var config_file : ConfigFile = ConfigFile.new()
+var config_file : ConfigFile
 var start : Room
 
 const ISLE_OF_FLESH : String = "res://assets/levels/isle_of_flesh.cfg"
@@ -16,7 +16,7 @@ const LINE_WIDTH : int = 66 ## Characters per line in output.
 @onready var flags := Flags.new()
 @onready var inventory := Inventory.new()
 @onready var current_level := Level.new()
-@onready var output_name: Label = %OutputName
+@onready var output_name : Label = %OutputName
 @onready var output : Label = %Output
 @onready var quit_button: Button = %QuitButton
 @onready var options_container: VBoxContainer = %OptionsContainer
@@ -208,6 +208,7 @@ func play_level(level : String):
 	else: goto(current_level.get_start())
 
 func read_level(level : String) -> Level:
+	config_file = ConfigFile.new()
 	var l := Level.new()
 	if config_file.load(level) != OK: 
 		printerr("Unable to load " + level.get_file())

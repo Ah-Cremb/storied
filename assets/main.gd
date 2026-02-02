@@ -134,7 +134,7 @@ class Room:
 		var s = ""
 		var i : int = 0
 		for c in _desc:
-			if i >= LINE_WIDTH and c in " \t\n":
+			if (i >= LINE_WIDTH and c in " \t") or c == NL:
 				s += NL
 				i = 0
 			else: 

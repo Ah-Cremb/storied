@@ -1,9 +1,7 @@
 extends Node
 
 var config_file : ConfigFile
-var start : Room
 
-const ISLE_OF_FLESH : String = "res://assets/levels/isle_of_flesh.cfg"
 const EMPTY_LEVEL : String = "res://assets/levels/empty.cfg"
 const DOCS : String = "res://assets/documentation.txt"
 
@@ -12,10 +10,11 @@ const ASSET_DIR : String = "res://assets/levels/"
 const NL := "\n"
 const T := "\t"
 const LINE_WIDTH : int = 66 ## Characters per line in output.
+const OPTION_FONT_SIZE : int = 24
 
 @onready var flags := Flags.new()
 @onready var inventory := Inventory.new()
-@onready var current_level := Level.new()
+@onready var current_level : Level
 @onready var output_name : Label = %OutputName
 @onready var output : Label = %Output
 @onready var quit_button: Button = %QuitButton
@@ -32,12 +31,11 @@ const LINE_WIDTH : int = 66 ## Characters per line in output.
 @onready var docs_container: PanelContainer = %DocsContainer
 
 
-###
+### Classes
 
+## Object storing true/false states such as "visited_library" or "injured".
 class Flags:
-	var flag_dict : Dictionary[String, bool] = {
-		"dead" : false
-	}
+	var flag_dict : Dictionary[String, bool] = {}
 	func set_flag(flag : String, val : bool = true) -> bool:
 		if found(flag): 
 			flag_dict[flag] = val
@@ -50,16 +48,8 @@ class Flags:
 		else: return flag_dict[flag]
 	func clear(): flag_dict.clear()
 
-func set_true(flag : String) -> void:
-	flags.set_flag(flag, true)
-	return
-
-func set_false(flag : String) -> void:
-	flags.set_flag(flag, false)
-	return
-
-###
-
+## Object storing all collected items both physical (like tools) and
+## abstract (like turns spent waiting in one room).
 class Inventory:
 	var inv_dict : Dictionary[String, int]
 	func add(item : String, num : int = 1) -> void:
@@ -83,16 +73,8 @@ class Inventory:
 		return s
 	func clear(): inv_dict.clear()
 
-func add(item : String, val : int = 1) -> void:
-	inventory.add(item, val)
-	print(inventory)
-	return
-
-func remove(item : String, val : int = 1) -> bool:
-	return inventory.remove(item, val)
-
-###
-
+## A text adventure object composed of rooms that can be reached by
+## going to their room_id.
 class Level:
 	var rooms : Dictionary[String, Room]
 	func add(room : Room): rooms[room.id] = room
@@ -102,14 +84,16 @@ class Level:
 		return s
 	func get_room(id : String) -> Room: return rooms.get(id)
 	func get_start() -> String: return rooms.keys()[0]
-	func is_empty() -> bool: 
-		return rooms.size() == 0
-	#func clear(): rooms.clear()
-	func list_rooms():
-		print("ROOMS:[")
-		for room in rooms: print(rooms[room].id)
-		print("]")
+	func is_empty() -> bool: return rooms.size() == 0
+	func get_max_options() -> int:
+		var i : int = 0
+		for room in rooms:
+			i = max(i, rooms[room].options.size())
+		return i
 
+## A room within a level, with an optional name, displayed text 
+## (some of which can show only if the correct conditions are met), 
+## and selectable Options.
 class Room:
 	var name : String
 	var id : String
@@ -128,11 +112,9 @@ class Room:
 		s += name + " [" + id + "]" + NL + desc + NL
 		for option : Option in options: s += NL + "Option: " + str(option)
 		return s
-	func display() -> String:
-		return name + NL + desc
 	func set_desc_width(_desc : String) -> String:
-		var s = ""
-		var i : int = 0
+		var s := ""
+		var i := 0
 		for c in _desc:
 			if (i >= LINE_WIDTH and c in " \t") or c == NL:
 				s += NL
@@ -147,6 +129,9 @@ class Room:
 			new_dict[key] = set_desc_width(dc[key])
 		return new_dict
 
+## An selectable option in a room, with the displayed text, conditions needed
+## for it to be available, and any actions triggered such as flag changes or
+## adding and removing inventory items.
 class Option:
 	var text : String = ""
 	var actions : Array[Action]
@@ -170,6 +155,8 @@ class Option:
 		for condition in conditions: s += NL + "Condition: " + condition
 		return s
 
+## This is a function call connected with options in a room, formatted as
+## ["callable_name", "arg1", "arg2", ...]
 class Action:
 	var callable : String = ""
 	var args : Array = []
@@ -184,38 +171,47 @@ class Action:
 		s += callable
 		for arg in args: s += ", " + str(arg)
 		return s
+
 ###
 
+## Connect button outputs in UI, upload documentation, and start an empty level.
 func _ready() -> void:
-	file_dialog.hide()
+	# Connect button outputs
 	quit_button.pressed.connect(quit)
 	close_files_button.pressed.connect(file_dialog.hide)
 	close_docs.pressed.connect(docs_container.hide)
 	load_button.pressed.connect(_on_load_file_pressed)
 	open_folder_button.pressed.connect(show_level_dir)
 	refresh_button.pressed.connect(_on_load_file_pressed)
-	add_docs()
 	view_docs.pressed.connect(docs_container.show)
-	docs.text = FileAccess.open(DOCS, FileAccess.READ).get_as_text()
-	#play_level(ISLE_OF_FLESH)
+	
+	# Add documentation in game
+	add_docs()
+	# Start with empty level
 	play_level(EMPTY_LEVEL)
 
-func show_level_dir() -> void:
-	OS.shell_show_in_file_manager(ProjectSettings.globalize_path(LEVEL_DIR))
-
+## Press Esc to quit.
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("quit"): quit()
 
+## Resets inventory, flags and rooms, and calls read_level() to read .cfg.
 func play_level(level : String):
-	print("Now loading " + level.get_file())
 	inventory.clear()
 	flags.clear()
 	current_level = read_level(level)
+	
+	for child in options_container.get_children(): child.queue_free()
+	for i in range(current_level.get_max_options()):
+		var button := Button.new()
+		button.name = "Option" + str(i + 1)
+		button.add_theme_font_size_override("font_size", OPTION_FONT_SIZE)
+		options_container.add_child(button)
 	
 	if not current_level or current_level.is_empty():
 		output.text = "Select a level to begin."
 	else: goto(current_level.get_start())
 
+## Reads the provided .cfg file and generates a new level.
 func read_level(level : String) -> Level:
 	config_file = ConfigFile.new()
 	var l := Level.new()
@@ -243,16 +239,18 @@ func read_level(level : String) -> Level:
 		l.add(room)
 	return l
 
+## For each option in the room that has its conditions met, a button is shown
+## with the correct text displayed and the function triggers connected.
 func show_options(options : Array[Option]) -> void:
 	var buttons := options_container.get_children()
 	for i in range(len(buttons)):
 		var button : Button = buttons[i]
+		button.show()
 		reset_signal(button.pressed)
 		if i < options.size():
 			var option : Option = options[i]
 			button.text = option.text
 			
-			button.visible = true
 			for condition in option.conditions:
 				if not check_condition(condition): button.visible = false
 			
@@ -261,10 +259,11 @@ func show_options(options : Array[Option]) -> void:
 				else:
 					button.pressed.connect(func(): callv(action.callable, action.args))
 			if option.goes_to != "": button.pressed.connect(goto.bind(option.goes_to))
-		else:
-			button.visible = false
+		else: button.hide()
 	return
 
+## Checks if a condition attached to an option or conditional description item
+## is true, and returns the result.
 func check_condition(condition : Array) -> bool:
 	var num_args : int = condition.size()
 	match num_args:
@@ -284,6 +283,8 @@ func check_condition(condition : Array) -> bool:
 			else: return false
 	return true
 
+## Evaluates whether each string in desc_cond has its conditions met,
+## and adds it to the shown description if so.
 func get_conditional_desc(desc : String, desc_cond : Dictionary) -> String:
 	if desc_cond.is_empty(): return desc
 	var s : String = desc
@@ -296,26 +297,15 @@ func get_conditional_desc(desc : String, desc_cond : Dictionary) -> String:
 		if to_add: s += desc_cond[key]
 	return s
 
-func compare(item : String, operator : String = ">", num : int = 0) -> bool:
-	var count : int = inventory.count(item)
-	var result : bool = false
-	
-	match operator:
-		"<": result = (count < num)
-		">": result = (count > num)
-		"<=": result = (count <= num)
-		">=": result = (count >= num)
-		"=", "==": result = (count == num)
-		"!", "!=": result = (count != num)
-	print(item + operator + str(num) + ": " + str(result))
-	return result
-
+## Removes all functions connected to this signal.
 func reset_signal(s : Signal) -> void:
 	for connection in s.get_connections():
 		s.disconnect(connection["callable"])
 
+## Closes the game.
 func quit(): get_tree().quit()
 
+## Jumps to room with the given ID within this level.
 func goto(room_id : String) -> void:
 	var room : Room = current_level.get_room(room_id)
 	if not room: 
@@ -326,23 +316,15 @@ func goto(room_id : String) -> void:
 	show_options(room.options)
 	return
 
-#func increment(var_name : String, i : int = 1) -> void:
-	#print(var_name + " " + str(self.get(var_name)))
-	#self.set(var_name, self.get(var_name) + i)
-	#print(var_name + " " + str(self.get(var_name)))
-	#return
-	#
-#func decrement(var_name : String, i : int = -1) -> void:
-	#if i > 0: i *= -1 # Ensure negative value
-	#increment(var_name, i)
-
-
+## Makes documentation visible in-game.
 func add_docs():
-	#var file := FileAccess.open(DOCS, FileAccess.READ)
-	#var docs := file.get_as_text()
-	#file.close()
-	return
+	var file := FileAccess.open(DOCS, FileAccess.READ)
+	docs.text = file.get_as_text()
+	file.close()
 
+### Functions called by button presses
+
+## Shows all .cfg files in res:// (builtin) and user:// (uploaded) in popup.
 func _on_load_file_pressed():
 	for child in file_display_v_box.get_children(): child.queue_free()
 	file_dialog.show()
@@ -366,3 +348,34 @@ func _on_load_file_pressed():
 		button.pressed.connect(play_level.bind(file))
 		button.pressed.connect(file_dialog.hide)
 		file_display_v_box.add_child(button)
+
+## Opens directory in File Manager where new .cfg levels are uploaded.
+func show_level_dir() -> void:
+	OS.shell_show_in_file_manager(ProjectSettings.globalize_path(LEVEL_DIR))
+
+### Functions associated with classes
+
+## Sets a flag to true, creating it if it doesn't exist.
+func set_true(flag : String) -> void: flags.set_flag(flag)
+## Sets a flag to false, creating it if it doesn't exist.
+func set_false(flag : String) -> void: flags.set_flag(flag, false)
+
+## Add item to inventory, 1 by default.
+func add(item : String, val : int = 1): inventory.add(item, val)
+## Remove item from inventory, 1 by default.
+func remove(item : String, val : int = 1) -> bool:
+	return inventory.remove(item, val)
+
+## Checks quantity of item in inventory in format "name<#, name!=#, etc.
+func compare(item : String, operator : String = ">", num : int = 0) -> bool:
+	var count : int = inventory.count(item)
+	var result : bool = false
+	
+	match operator:
+		"<": result = (count < num)
+		">": result = (count > num)
+		"<=": result = (count <= num)
+		">=": result = (count >= num)
+		"=", "==": result = (count == num)
+		"!", "!=": result = (count != num)
+	return result

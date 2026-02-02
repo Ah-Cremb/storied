@@ -60,34 +60,6 @@ layout_mode = 2
 size_flags_vertical = 8
 alignment = 2
 
-[node name="Option1" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer/OptionsContainer" unique_id=2084226877]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Option 1"
-
-[node name="Option2" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer/OptionsContainer" unique_id=1231782218]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Option 2"
-
-[node name="Option3" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer/OptionsContainer" unique_id=34986063]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Option 3"
-
-[node name="Option4" type="Button" parent="MarginContainer/VBoxContainer/MarginContainer/OptionsContainer" unique_id=769788646]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Option 4"
-
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=332263917]
 layout_mode = 2
 size_flags_vertical = 8

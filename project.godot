@@ -14,7 +14,6 @@ config/name="Storied"
 run/main_scene="uid://s1t4klsokcig"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="uid://bmdsr87hpapgv"
-config/windows_native_icon="res://assets/logo.ico"
 
 [file_customization]
 

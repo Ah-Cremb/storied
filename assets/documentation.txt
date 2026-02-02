@@ -45,7 +45,7 @@ options=[
 	{"text":"Go East","goto":"room_id"},
 	{
 		"conditions":[
-			["rock", "=", 0] # Calls compare(args) and returns true if
+			["not","rock"] # Calls compare("rock","=",0) and returns true if
 									 # no rock in inventory.
 									 # All conditions must be met for option to show.
 		]

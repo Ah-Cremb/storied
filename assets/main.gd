@@ -112,11 +112,13 @@ class Room:
 	var name : String
 	var id : String
 	var desc : String
+	var desc_cond : Dictionary
 	var options : Array[Option]
-	func _init(_name : String, _id : String, _desc : String, _options : Array[Option]) -> void:
+	func _init(_name : String, _id : String, _desc : String, _desc_cond : Dictionary, _options : Array[Option]) -> void:
 		name = _name
 		id = _id
 		desc = set_desc_width(_desc)
+		desc_cond = _desc_cond
 		options = _options
 		return
 	func _to_string() -> String:
@@ -214,18 +216,20 @@ func read_level(level : String) -> Level:
 	for room_id : String in rooms:
 		var room_name : String = config_file.get_value(room_id, "name", "")
 		var room_desc : String = config_file.get_value(room_id, "desc", "")
+		var room_desc_cond : Dictionary = config_file.get_value(room_id, "desc_cond", {})
+		#room_desc = get_conditional_desc(room_desc, room_desc_cond)
 		var options : Array[Option]
 		var op_values = null
 		if "options" in config_file.get_section_keys(room_id):
 			op_values = config_file.get_value(room_id, "options")
 		for op in op_values if op_values else []:
 			var text = op.get("text", "Default Text")
-			var goes_to = op.get("goto", "")
+			var goes_to = op.get("goto", room_id)
 			var actions = op.get("actions", [])
 			var conditions = op.get("conditions", [])
 			var option := Option.new(text, goes_to, actions, conditions)
 			options.append(option)
-		var room := Room.new(room_name, room_id, room_desc, options)
+		var room := Room.new(room_name, room_id, room_desc, room_desc_cond, options)
 		l.add(room)
 	return l
 
@@ -257,7 +261,9 @@ func check_condition(condition : Array) -> bool:
 		1: return flags.at(condition[0]) # Checks if a flag is t/f
 		2:
 			if condition[0] in ["have", "has"]:
-				return compare(condition[1],">", 0)
+				return compare(condition[1], ">", 0)
+			elif condition[0] in ["not", "have_not"]:
+				return compare(condition[1], "=", 0)
 			elif typeof(condition[1]) == TYPE_BOOL: return flags.at(condition[0]) == condition[1]
 		3:
 			printerr("invalid condition: " + str(condition))
@@ -267,6 +273,18 @@ func check_condition(condition : Array) -> bool:
 				return compare.callv(condition.slice(1))
 			else: return false
 	return true
+
+func get_conditional_desc(desc : String, desc_cond : Dictionary) -> String:
+	if desc_cond.is_empty(): return desc
+	var s : String = desc
+	for key : Array in desc_cond:
+		var to_add := true
+		for condition in key:
+			if not check_condition(condition):
+				to_add = false
+				break
+		if to_add: s += desc_cond[key]
+	return s
 
 func compare(item : String, operator : String = ">", num : int = 0) -> bool:
 	var count : int = inventory.count(item)
@@ -294,7 +312,7 @@ func goto(room_id : String) -> void:
 		printerr("No room with id " + room_id + ".")
 		return
 	output_name.text = room.name
-	output.text = room.desc
+	output.text = get_conditional_desc(room.desc, room.desc_cond)
 	show_options(room.options)
 	return
 

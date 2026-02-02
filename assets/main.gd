@@ -48,6 +48,7 @@ class Flags:
 	func at(flag : String) -> bool:
 		if not found(flag): return false
 		else: return flag_dict[flag]
+	func clear(): flag_dict.clear()
 
 func set_true(flag : String) -> void:
 	flags.set_flag(flag, true)
@@ -80,6 +81,7 @@ class Inventory:
 		for item : String in inv_dict:
 			s += item + " x" + str(count(item)) + NL
 		return s
+	func clear(): inv_dict.clear()
 
 func add(item : String, val : int = 1) -> void:
 	inventory.add(item, val)
@@ -118,7 +120,7 @@ class Room:
 		name = _name
 		id = _id
 		desc = set_desc_width(_desc)
-		desc_cond = _desc_cond
+		desc_cond = set_desc_cond_width(_desc_cond)
 		options = _options
 		return
 	func _to_string() -> String:
@@ -139,6 +141,11 @@ class Room:
 				s += c
 				i += 1
 		return s
+	func set_desc_cond_width(dc : Dictionary) -> Dictionary:
+		var new_dict : Dictionary
+		for key in dc:
+			new_dict[key] = set_desc_width(dc[key])
+		return new_dict
 
 class Option:
 	var text : String = ""
@@ -201,6 +208,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func play_level(level : String):
 	print("Now loading " + level.get_file())
+	inventory.clear()
+	flags.clear()
 	current_level = read_level(level)
 	
 	if not current_level or current_level.is_empty():

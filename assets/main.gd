@@ -187,6 +187,8 @@ func _ready() -> void:
 	
 	# Add documentation in game
 	add_docs()
+	DirAccess.make_dir_absolute(LEVEL_DIR)
+
 	# Start with empty level
 	play_level(EMPTY_LEVEL)
 
@@ -331,6 +333,7 @@ func _on_load_file_pressed():
 	var files : Array[String] = []
 	for directory : String in [LEVEL_DIR, ASSET_DIR]:
 		var dir := DirAccess.open(directory)
+		if not dir: continue
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while file_name != "":

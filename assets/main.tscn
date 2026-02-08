@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://s1t4klsokcig"]
 
 [ext_resource type="Script" uid="uid://dy3dd7et6jmh1" path="res://assets/main.gd" id="1_db5cl"]
+[ext_resource type="Theme" uid="uid://n2jkuhkb7e8y" path="res://assets/default_theme.tres" id="2_06ig3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_06ig3"]
 bg_color = Color(0, 0, 0, 1)
@@ -17,31 +18,32 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.066021666, 0.07, 0.0483, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=890865465]
+[node name="Margins" type="MarginContainer" parent="." unique_id=890865465]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_06ig3")
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=2129273312]
+[node name="MainVBox" type="VBoxContainer" parent="Margins" unique_id=2129273312]
 layout_mode = 2
 
-[node name="OutputName" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1284625625]
+[node name="OutputName" type="Label" parent="Margins/MainVBox" unique_id=1284625625]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=851043757]
+[node name="OutputScroll" type="ScrollContainer" parent="Margins/MainVBox" unique_id=851043757]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Output" type="Label" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=1524386439]
+[node name="Output" type="Label" parent="Margins/MainVBox/OutputScroll" unique_id=1524386439]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 6
@@ -49,29 +51,29 @@ size_flags_vertical = 6
 theme_override_font_sizes/font_size = 20
 vertical_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer" unique_id=772290331]
+[node name="Margins" type="MarginContainer" parent="Margins/MainVBox" unique_id=772290331]
 layout_mode = 2
 theme_override_constants/margin_left = 100
 theme_override_constants/margin_right = 100
 
-[node name="OptionsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer" unique_id=677621008]
+[node name="OptionsContainer" type="VBoxContainer" parent="Margins/MainVBox/Margins" unique_id=677621008]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 alignment = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=332263917]
+[node name="ButtonsHBox" type="HBoxContainer" parent="Margins/MainVBox" unique_id=332263917]
 layout_mode = 2
 size_flags_vertical = 8
 alignment = 2
 
-[node name="LoadButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=995332165]
+[node name="LoadButton" type="Button" parent="Margins/MainVBox/ButtonsHBox" unique_id=995332165]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Load Level"
 
-[node name="QuitButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=631661435]
+[node name="QuitButton" type="Button" parent="Margins/MainVBox/ButtonsHBox" unique_id=631661435]
 unique_name_in_owner = true
 layout_mode = 2
 text = "QUIT"
@@ -91,61 +93,62 @@ offset_bottom = 296.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+theme = ExtResource("2_06ig3")
 theme_override_styles/panel = SubResource("StyleBoxFlat_06ig3")
 
-[node name="MarginContainer" type="MarginContainer" parent="FileDialog" unique_id=1424012055]
+[node name="Margins" type="MarginContainer" parent="FileDialog" unique_id=1424012055]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="VBoxContainer" type="VBoxContainer" parent="FileDialog/MarginContainer" unique_id=1206564509]
+[node name="FileVBox" type="VBoxContainer" parent="FileDialog/Margins" unique_id=1206564509]
 layout_mode = 2
 
-[node name="Header" type="HBoxContainer" parent="FileDialog/MarginContainer/VBoxContainer" unique_id=1799213233]
+[node name="FileHeader" type="HBoxContainer" parent="FileDialog/Margins/FileVBox" unique_id=1799213233]
 layout_mode = 2
 
-[node name="Files" type="Label" parent="FileDialog/MarginContainer/VBoxContainer/Header" unique_id=1630180846]
+[node name="FilesLabel" type="Label" parent="FileDialog/Margins/FileVBox/FileHeader" unique_id=1630180846]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "FILES"
 horizontal_alignment = 1
 
-[node name="CloseFilesButton" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/Header" unique_id=937882463]
+[node name="CloseFilesButton" type="Button" parent="FileDialog/Margins/FileVBox/FileHeader" unique_id=937882463]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "❌"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="FileDialog/MarginContainer/VBoxContainer" unique_id=1646303640]
+[node name="FileScroll" type="ScrollContainer" parent="FileDialog/Margins/FileVBox" unique_id=1646303640]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="FileDisplayVBox" type="VBoxContainer" parent="FileDialog/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1828305402]
+[node name="FileDisplayVBox" type="VBoxContainer" parent="FileDialog/Margins/FileVBox/FileScroll" unique_id=1828305402]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="FileDialog/MarginContainer/VBoxContainer" unique_id=1087422228]
+[node name="FilesButtons" type="HBoxContainer" parent="FileDialog/Margins/FileVBox" unique_id=1087422228]
 layout_mode = 2
 alignment = 2
 
-[node name="RefreshButton" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1669721322]
+[node name="RefreshButton" type="Button" parent="FileDialog/Margins/FileVBox/FilesButtons" unique_id=1669721322]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "🔄️"
 
-[node name="ViewDocs" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/HBoxContainer" unique_id=440024007]
+[node name="ViewDocs" type="Button" parent="FileDialog/Margins/FileVBox/FilesButtons" unique_id=440024007]
 unique_name_in_owner = true
 layout_mode = 2
 text = "View Docs"
 
-[node name="OpenFolderButton" type="Button" parent="FileDialog/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2105738711]
+[node name="OpenFolderButton" type="Button" parent="FileDialog/Margins/FileVBox/FilesButtons" unique_id=2105738711]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
@@ -166,54 +169,55 @@ offset_bottom = 296.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+theme = ExtResource("2_06ig3")
 theme_override_styles/panel = SubResource("StyleBoxFlat_06ig3")
 
-[node name="MarginContainer" type="MarginContainer" parent="DocsContainer" unique_id=1625215292]
+[node name="Margins" type="MarginContainer" parent="DocsContainer" unique_id=1625215292]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="VBoxContainer" type="VBoxContainer" parent="DocsContainer/MarginContainer" unique_id=1223356930]
+[node name="DocsVBox" type="VBoxContainer" parent="DocsContainer/Margins" unique_id=1223356930]
 layout_mode = 2
 
-[node name="Header" type="HBoxContainer" parent="DocsContainer/MarginContainer/VBoxContainer" unique_id=233523811]
+[node name="Header" type="HBoxContainer" parent="DocsContainer/Margins/DocsVBox" unique_id=233523811]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="DocsContainer/MarginContainer/VBoxContainer/Header" unique_id=1313906577]
+[node name="Label" type="Label" parent="DocsContainer/Margins/DocsVBox/Header" unique_id=1313906577]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "Documentation"
 horizontal_alignment = 1
 
-[node name="CloseDocs" type="Button" parent="DocsContainer/MarginContainer/VBoxContainer/Header" unique_id=1918274192]
+[node name="CloseDocs" type="Button" parent="DocsContainer/Margins/DocsVBox/Header" unique_id=1918274192]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "❌"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="DocsContainer/MarginContainer/VBoxContainer" unique_id=514974067]
+[node name="DocsButtons" type="HBoxContainer" parent="DocsContainer/Margins/DocsVBox" unique_id=514974067]
 visible = false
 layout_mode = 2
 alignment = 2
 
-[node name="RefreshButton" type="Button" parent="DocsContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1919018281]
+[node name="RefreshButton" type="Button" parent="DocsContainer/Margins/DocsVBox/DocsButtons" unique_id=1919018281]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "🔄️"
 
-[node name="ViewDocs" type="Button" parent="DocsContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2100387983]
+[node name="ViewDocs" type="Button" parent="DocsContainer/Margins/DocsVBox/DocsButtons" unique_id=2100387983]
 layout_mode = 2
 text = "View Docs"
 
-[node name="OpenFolderButton" type="Button" parent="DocsContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=149601538]
+[node name="OpenFolderButton" type="Button" parent="DocsContainer/Margins/DocsVBox/DocsButtons" unique_id=149601538]
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Open Folder"
 
-[node name="Docs" type="RichTextLabel" parent="DocsContainer/MarginContainer/VBoxContainer" unique_id=761663062]
+[node name="Docs" type="RichTextLabel" parent="DocsContainer/Margins/DocsVBox" unique_id=761663062]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
